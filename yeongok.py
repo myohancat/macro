@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import Select
@@ -7,7 +8,7 @@ from selenium.webdriver.support import expected_conditions as EC
 import time
 import datetime
 
-driver = webdriver.Chrome(executable_path="/home/kykim/macro/bin/chromedriver")
+driver = webdriver.Chrome(executable_path="driver/118.0.5993.70/chromedriver")
 
 def wait(until, before):
 	target = datetime.datetime.strptime(until, '%Y-%m-%d %H:%M:%S')
@@ -23,10 +24,10 @@ def open_reserv_page():
 	WebDriverWait(driver, 10).until(lambda driver: driver.execute_script('return document.readyState') == 'complete')
 
 def close_popup():
-	click = driver.find_element_by_name("today_dpnone")
+	click = driver.find_element(By.NAME, value="today_dpnone")
 	click.click()
 
-	click2 = driver.find_element_by_xpath('//button[text()="동의"]')
+	click2 = driver.find_element(By.XPATH, '//button[text()="동의"]')
 	click2.click();
 
 def wait_deck_button(deck, reserv_date):
@@ -34,7 +35,7 @@ def wait_deck_button(deck, reserv_date):
 	while cnt < 10:
 		try:
 			WebDriverWait(driver, 3).until(lambda driver: driver.execute_script('return document.readyState') == 'complete')
-			button = driver.find_element_by_xpath('//button[@value="'+ deck + ':'+ reserv_date +'"]')
+			button = driver.find_element(By.XPATH, '//button[@value="'+ deck + ':'+ reserv_date +'"]')
 			return button
 		except:
 			print("Not found. retry : " + str(cnt))
@@ -56,9 +57,9 @@ def get_deck_list(deck, reserv_date):
 # CONFIGURE
 #########################################################
 starttime   = '2021-12-01 10:00:00'
-year        = '2022'
-month       = '01'
-day         = '01'
+year        = '2023'
+month       = '10'
+day         = '21'
 #deck        = 'A'
 #prefer      = [ 'A141', 'A138', 'A143', 'A139', 'A140', 'A157', 'A156', 'A158', 'A155', 'A154', 
 #                'A151', 'A152', 'A153', 'A133', 'A130', 'A135', 'A127', 'A117', 'A115', 'A116', 
@@ -143,4 +144,4 @@ for sel in sel_list:
 	select = Select(sel)
 	select.select_by_visible_text('2명')
 
-driver.find_element_by_xpath('//button[text()="다음단계"]').click()
+driver.find_element(By.XPATH, '//button[text()="다음단계"]').click()

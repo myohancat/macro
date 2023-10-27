@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import Select
@@ -7,7 +10,7 @@ from selenium.webdriver.common.keys import Keys
 import time
 import datetime
 
-driver = webdriver.Chrome(executable_path="/home/kykim/macro/bin/chromedriver")
+driver = webdriver.Chrome(executable_path="driver/118.0.5993.70/chromedriver")
 
 def wait(until, before):
 	target = datetime.datetime.strptime(until, '%Y-%m-%d %H:%M:%S')
@@ -21,9 +24,9 @@ def login():
 	url = 'https://www.chuamautocamping.or.kr/member/login.htm'
 	driver.get(url)
 	WebDriverWait(driver, 10).until(lambda driver: driver.execute_script('return document.readyState') == 'complete')
-	driver.find_element_by_xpath("//input[@id='userid']").send_keys("myohancat")
-	driver.find_element_by_xpath("//input[@id='passwd']").send_keys("whdmsrud2104")
-	driver.find_element_by_xpath("//input[@title='로그인']").click()
+	driver.find_element(By.XPATH, "//input[@id='userid']").send_keys("myohancat")
+	driver.find_element(By.XPATH, "//input[@id='passwd']").send_keys("whdmsrud2104")
+	driver.find_element(By.XPATH, "//input[@title='로그인']").click()
 
 def open_reserv_page(year, month):
 	url = 'https://www.chuamautocamping.or.kr/reservation/02.htm?code=&year='+year+'&month='+month+'#body_content'
@@ -107,7 +110,7 @@ else:
 
 deck.click()
 
-driver.find_element_by_xpath("//select[@name='res_Many']/option[text()='1명']").click()
+driver.find_element(By.XPATH, "//select[@name='res_Many']/option[text()='1명']").click()
 cnt = 0
 while cnt < 10:
 	try:
