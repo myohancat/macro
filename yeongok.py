@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import Select
 from selenium.webdriver.support.ui import WebDriverWait
@@ -7,8 +8,15 @@ from selenium.webdriver.support import expected_conditions as EC
 
 import time
 import datetime
+import sys
 
-driver = webdriver.Chrome(executable_path="driver/118.0.5993.70/chromedriver")
+if sys.version_info.major == 2:
+    driver = webdriver.Chrome(executable_path="driver/118.0.5993.70/chromedriver")
+else :
+    service = Service(executable_path="driver/118.0.5993.70/chromedriver")
+    options = webdriver.ChromeOptions()
+    options.add_experimental_option("detach", True)
+    driver = webdriver.Chrome(service=service, options=options)
 
 def wait(until, before):
 	target = datetime.datetime.strptime(until, '%Y-%m-%d %H:%M:%S')
