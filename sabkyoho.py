@@ -24,10 +24,13 @@ day         = '29'
 prefer      = [ 'B-4', 'B-5', 'B-3', 'B-2', 'D-4', 'D-3', 'D-2', 'D-1', 'B-1', 'C-4' ]
 ##########################################################
 
+#chrome_version = "101.0.4951.41"
+chrome_version = "118.0.5993.70"
+
 if sys.version_info.major == 2:
-    driver = webdriver.Chrome(executable_path="driver/118.0.5993.70/chromedriver")
+    driver = webdriver.Chrome(executable_path="driver/" + chrome_version + "/chromedriver")
 else :
-    service = Service(executable_path="driver/118.0.5993.70/chromedriver")
+    service = Service(executable_path="driver/" + chrome_version + "/chromedriver")
     options = webdriver.ChromeOptions()
     #options.binary_location = r"chrome-linux64/chrome"
     options.add_experimental_option("detach", True)

@@ -9,8 +9,19 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.keys import Keys
 import time
 import datetime
+import sys
 
-driver = webdriver.Chrome(executable_path="driver/118.0.5993.70/chromedriver")
+#chrome_version = "101.0.4951.41"
+chrome_version = "118.0.5993.70"
+
+if sys.version_info.major == 2:
+    driver = webdriver.Chrome(executable_path="driver/" + chrome_version + "/chromedriver")
+else :
+    service = Service(executable_path="driver/" + chrome_version + "/chromedriver")
+    options = webdriver.ChromeOptions()
+    #options.binary_location = r"chrome-linux64/chrome"
+    options.add_experimental_option("detach", True)
+    driver = webdriver.Chrome(service=service, options=options)
 
 def wait(until, before):
 	target = datetime.datetime.strptime(until, '%Y-%m-%d %H:%M:%S')

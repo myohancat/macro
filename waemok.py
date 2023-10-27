@@ -24,10 +24,13 @@ day         = '29'
 prefer      = [ '왜목-1',  '왜목-2', '왜목-3', '왜목-7', '왜목-6', '왜목-5', '왜목-4']
 ##########################################################
 
+#chrome_version = "101.0.4951.41"
+chrome_version = "118.0.5993.70"
+
 if sys.version_info.major == 2:
-    driver = webdriver.Chrome(executable_path="driver/118.0.5993.70/chromedriver")
+    driver = webdriver.Chrome(executable_path="driver/" + chrome_version + "/chromedriver")
 else :
-    service = Service(executable_path="driver/118.0.5993.70/chromedriver")
+    service = Service(executable_path="driver/" + chrome_version + "/chromedriver")
     options = webdriver.ChromeOptions()
     #options.binary_location = r"chrome-linux64/chrome"
     options.add_experimental_option("detach", True)
