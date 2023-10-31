@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
+# -*- coding: utf-8,euc-kr -*-
 
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
@@ -16,12 +16,12 @@ import sys
 #########################################################
 # CONFIGURE
 #########################################################
-starttime   = '2023-10-11 16:58:00'
+starttime   = '2023-10-31 16:00:00'
 year        = '2023'
-month       = '10'
-day         = '29'
+month       = '11'
+day         = '8'
 
-prefer      = [ 'B-4', 'B-5', 'B-3', 'B-2', 'D-4', 'D-3', 'D-2', 'D-1', 'B-1', 'C-4' ]
+prefer      = [ 'B-4', 'B-5', 'B-3', 'B-2', 'D-4', 'D-3', 'D-2', 'D-1', 'B-1' ]
 ##########################################################
 
 #chrome_version = "101.0.4951.41"
@@ -45,28 +45,33 @@ def wait(until, before):
 		time.sleep(d)
 
 def open_reserv_page():
-	url = 'https://camping.dpto.or.kr/sub3/3_1.php'
-	driver.get(url)
-	WebDriverWait(driver, 10).until(lambda driver: driver.execute_script('return document.readyState') == 'complete')
+    url = 'https://camping.dpto.or.kr/sub3/3_1.php'
+    driver.get(url)
+    WebDriverWait(driver, 10).until(lambda driver: driver.execute_script('return document.readyState') == 'complete')
 
-# WebDriverWait(driver, 3).until(EC.element_to_be_clickable((By.XPATH, '//div[@class="btn2"]/a'))).click()
-def wait_deck_button(month, day):
-    cnt = 0
-
-    while cnt < 10:
+def select_month():
+    m = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, '//*[@id="calendar_ajax"]/div/ul/li[2]')))
+    if m.text != year + "." + month:
+        li = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, '//li[@class="cal_next"]')))
+        li.find_element(By.TAG_NAME, "a").click()
+        WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, '//li[text()="' + year + '.' + month + '"]')))
+    #driver.execute_script("calendarLoad('"+year+"', '"+month+"')")
+    
+def wait_day_button(month, day):
+    ol = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, '//ol[@class="date"]')))
+    days = driver.find_elements(By.XPATH, '//li[starts-with(@onclick, "Mapload")]')
+    for d in days:
         try:
-            WebDriverWait(driver, 3).until(lambda driver: driver.execute_script('return document.readyState') == 'complete')
-            button = WebDriverWait(driver, 3).until(EC.element_to_be_clickable((By.XPATH, '//div[@id="calendar_ajax"]/ol/li[contains(.,"'+day+'")]')))
-            return button
+            if d.find_element(By.TAG_NAME, "span").text == day:
+                return d
         except:
-            print("Not found. retry : " + str(cnt))
-            cnt += 1
-            time.sleep(0.2)
-        return None
+            print("")
+
+    return None
         
 def get_deck_list():
-    WebDriverWait(driver, 3).until(EC.presence_of_element_located((By.XPATH, '//div[@id="map_ajax"]/div')))
     try:
+        WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, '//div[@id="map_ajax"]/div')))
         button_list = driver.find_elements(By.XPATH, '//a[contains (@onclick, "siteInfoLoad")]')
         return button_list
     except:
@@ -85,8 +90,9 @@ print("Wait to " + starttime)
 wait(starttime, 0.0)
 
 driver.refresh()
+select_month()
 
-button = wait_deck_button(month, day)
+button = wait_day_button(month, day)
 if button == None:
     print("No deck button available")
     quit()
@@ -94,17 +100,6 @@ if button == None:
 button.click()
 
 deck_list = get_deck_list()
-
-# W/A Code for Invalid Deck Issue
-if deck_list == None or len(deck_list) == 0:
-	open_reserv_page()
-	button = wait_deck_button(month, day)
-	if button == None:
-		print("No deck button available")
-		quit()
-	button.click()
-	deck_list = get_deck_list()
-
 if deck_list == None or len(deck_list) == 0:
 	print("No available deck")
 	quit()
@@ -142,7 +137,7 @@ driver.find_element(By.XPATH, '//input[@value="다음단계"]').click()
 # Final
 WebDriverWait(driver, 10).until(lambda driver: driver.execute_script('return document.readyState') == 'complete')
 WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.NAME, "or_name")))
-driver.find_element(By.XPATH, "//input[@id='rrrname']").send_keys("김경인")
+WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, "//input[@id='rrrname']"))).send_keys("김경인")
 driver.find_element(By.XPATH, "//input[@id='camping_type']").click()
 sel_list = driver.find_elements(By.XPATH, '(//select[@id="hp1"])')
 for sel in sel_list:
@@ -167,19 +162,9 @@ driver.find_element(By.XPATH, "//input[@name='agree2']").click()
 driver.find_element(By.XPATH, '//input[@value="다음단계"]').click()
 
 # Account
-WebDriverWait(driver, 10).until(lambda driver: driver.execute_script('return document.readyState') == 'complete')
-WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "account_birth")))
-driver.find_element(By.XPATH, "//input[@id='account_birth']").send_keys("19790409")
-driver.find_element(By.XPATH, "//input[@id='select_hp_1']").send_keys("7278")
-driver.find_element(By.XPATH, "//input[@id='select_hp_2']").send_keys("9276")
-driver.find_element(By.XPATH, "//input[@id='escw_terms_agree']").click()
-
-# Account
-WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "naxIfr")))
-iframe = driver.find_element(By.XPATH, '//iframe[@id="naxIfr"]')
+iframe = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "naxIfr")))
 driver.switch_to.frame(iframe);
-WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "account_birth")))
+WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, "//input[@id='account_birth']")))
 driver.find_element(By.XPATH, "//input[@id='account_birth']").send_keys("19790409")
 driver.find_element(By.XPATH, "//input[@id='select_hp_1']").send_keys("7278")
 driver.find_element(By.XPATH, "//input[@id='select_hp_2']").send_keys("9276")
-
